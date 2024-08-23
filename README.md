@@ -75,9 +75,9 @@ Run algorithm with Python 2.6.6 or later.
 The running results are saved in the ../results.
 
 Figure1 show our algorithm and GK algorithm results.
-![Figure1-5aaa](https://github.com/user-attachments/assets/eab47149-6c69-4271-9fbb-b88e5a719639)
+![Figure1-5aaa](https://github.com/user-attachments/assets/6c3d3b31-a0c5-4c48-9f0b-cc025c45ddaf)
 
 Figure2 show our algorithm and two-step algorithm results.
-![Figure-1aa](https://github.com/user-attachments/assets/7ba1cbe8-e964-4426-ace1-db955dadbb5a)
+![Figure-1aa](https://github.com/user-attachments/assets/e41b327f-f100-424b-886c-eb5805716fab)
 
 
