@@ -4,7 +4,7 @@ import random
 import itertools
 import scipy as sp
 
-#随机生成一个连通图
+#Generating a Random Connected Graph
 def generate_random_connected_graph(n_nodes, min_degree_m, max_degree_m):
     G = nx.Graph()
     G.add_node(0)
@@ -15,7 +15,7 @@ def generate_random_connected_graph(n_nodes, min_degree_m, max_degree_m):
     
     for node in G.nodes():
         connections = random.randint(min_degree_m, max_degree_m)
-        #print("点度:", node, connections)
+        #print("The degree of a node:", node, connections)
         neighbors_nodes = set(G.neighbors(node))
         connections = connections - len(neighbors_nodes)
         potential_nodes = set(range(n_nodes)) - {node} - set(G[node])
@@ -30,12 +30,12 @@ def generate_random_connected_graph(n_nodes, min_degree_m, max_degree_m):
 
 
 
-#计算图graph的点导出子图的连通分支个数
+#Calculate the number of connected components in the subgraph induced by the vertices of the graph
 def number_c1(G, vertices):
     sub_graph = G.subgraph(vertices)
     return nx.number_connected_components(sub_graph)
 
-#计算点还需要的覆盖次数
+#Calculate the additional number of coverages needed for the vertices_1
 def need_cover(G, vertice, vertices, rand_m):
     neighbors = set(G.neighbors(vertice))
     cover_need = rand_m - len(neighbors & vertices)
@@ -43,7 +43,7 @@ def need_cover(G, vertice, vertices, rand_m):
         cover_need = 0 
     return cover_need
 
-#计算选择点集后还需要的总的覆盖次数
+#Calculate the additional number of coverages needed for the vertices_2
 def need_cover_all(G, vertices, rand_m):
     total_need = 0
     for node in G.nodes:
@@ -60,7 +60,7 @@ def potential_function(G, vertices, rand_m):
     number_f = number_c1(G, vertices) + need_cover_all(G, vertices, rand_m)
     return number_f
 
-#定义点vertex满足引理条件的邻集
+#Define the neighborhood of vertex that satisfies the lemma conditions
 def condition_neighbors(graph, vertex, vertices):
     neighbors_1 = set()
     neighbors_2 = set(graph.neighbors(vertex)) - vertices
@@ -73,7 +73,7 @@ def condition_neighbors(graph, vertex, vertices):
             neighbors_1.add(u)
     return neighbors_1  
 
-#输出集合中权重最小的点
+#Output the point with the smallest weight in the set
 def min_weight_node(G, vertices):
     weight_1 = float('inf')
     for node in vertices:
@@ -82,7 +82,7 @@ def min_weight_node(G, vertices):
             weight_1 = G.nodes[node]['weight']
     return min_vertex
 
-#定义算法2，找出效率最高的星状结构
+#Find the most efficient star structure
 def algorithm_2(G, vertices, rand_m):
     max_benefit_star = set()
     max_benefit_rate = 0
@@ -93,11 +93,11 @@ def algorithm_2(G, vertices, rand_m):
         weight_v1 = G.nodes[vertex]['weight']
         marginal_benefit = - potential_function(G, tem_set, rand_m) + potential_function(G, vertices, rand_m)
         marginal_benefit_rate = marginal_benefit/weight_v1
-        if need_cover(G, vertex, vertices, rand_m) == 0: #如果点vertex没有覆盖需求，就继续选合适的邻点，否则直接输出S_2[vertex]
-            neighbor_set2 = condition_neighbors(G, vertex, vertices) #计算出满足引理条件的vertex的邻集
+        if need_cover(G, vertex, vertices, rand_m) == 0: 
+            neighbor_set2 = condition_neighbors(G, vertex, vertices) 
             #lenth_set = len(neighbor_set2)
             #if lenth_set > 0:
-                #print("符合引理条件的邻集:", neighbor_set2)
+                #print("Neighbor set satisfying the lemma condition:", neighbor_set2)
             while len(neighbor_set2) != 0:
                 u = min_weight_node(G, neighbor_set2)
                 neighbor_set2.remove(u)
@@ -115,22 +115,22 @@ def algorithm_2(G, vertices, rand_m):
             max_benefit_rate = marginal_benefit_rate
     return max_benefit_star
 
-#定义近似算法1，计算出一个（1，m）CDS
+#Compute a (1, m) CDS
 def algorithm_1(G, rand_m):
     i = 1
-    cd_set = set()  #点集connected_dominating_set初始化为空集
+    cd_set = set()  
     weight_set = 0
     while number_c1(G, cd_set) + need_cover_all(G, cd_set, rand_m) > 1 :
         eff_star = algorithm_2(G, cd_set, rand_m)
         weight_set = sum(G.nodes[node]['weight'] for node in eff_star)
         lenth_set_1 = len(eff_star)
         if lenth_set_1 > 1:
-            print("最", i, "个最优的星状结构:", eff_star, weight_set)
+            print("Top", i, "The optimal star structure:", eff_star, weight_set)
         cd_set.update(eff_star)
         i += 1
     return cd_set
 
-#定义算法3点vertex满足引理条件的邻集
+#The neighborhood of a vertex satisfying the lemma condition
 def condition_neighbors_2(graph, vertex, vertices):
     neighbors_1 = set()
     neighbors_2 = set(graph.neighbors(vertex)) - vertices
@@ -142,7 +142,7 @@ def condition_neighbors_2(graph, vertex, vertices):
             neighbors_1.add(u)
     return neighbors_1  
 
-#定义算法5，找出效率最高的星状结构
+#Find the optimal star structure
 def algorithm_5(G, vertices):
     max_benefit_star = set()
     max_benefit_rate = 0
@@ -154,7 +154,7 @@ def algorithm_5(G, vertices):
         marginal_benefit = - potential_function(G, tem_set, rand_m) + potential_function(G, vertices, rand_m)
         marginal_benefit_rate = marginal_benefit/weight_v1
 
-        neighbor_set2 = condition_neighbors_2(G, vertex, vertices) #计算出满足引理条件的vertex的邻集
+        neighbor_set2 = condition_neighbors_2(G, vertex, vertices) 
         while len(neighbor_set2) != 0:
             u = min_weight_node(G, neighbor_set2)
             neighbor_set2.remove(u)
@@ -172,9 +172,9 @@ def algorithm_5(G, vertices):
             max_benefit_rate = marginal_benefit_rate
     return max_benefit_star
 
-#定义算法3，计算出一个m-DS
+#Compute an m-dominating set.
 def algorithm_3(G, rand_m):
-    cd_set = set()  #点集connected_dominating_set初始化为空集
+    cd_set = set()  
     while need_cover_all(G, cd_set, rand_m) > 0 :
         cover_new_min = float('inf')
         for vertex in G.nodes() - cd_set:
@@ -187,65 +187,61 @@ def algorithm_3(G, rand_m):
         cd_set.add(potential_node)
     return cd_set
 
-#定义算法4，计算出一个（1，m）CDS
+#Compute an（1，m）CDS
 def algorithm_4(G, cd_set):
     i = 1
     while number_c1(G, cd_set) > 1 :
         eff_star = algorithm_5(G, cd_set)
-        print("最X个星状结构:", i, eff_star)
+        print("The top X star structures:", i, eff_star)
         cd_set.update(eff_star)
         i += 1
     return cd_set
 
 
-#循环次数
+#Number of iterations
 repeat_time = 10
 
 for i in range(repeat_time) :
-    # 生成连通图
     n_nodes = 500
     min_degree_m = 5
     max_degree_m = 20
     G = generate_random_connected_graph(n_nodes, min_degree_m, max_degree_m)
 
-    #计算最大最小度
+ 
     degrees = dict(G.degree())
     max_degree = max(degrees.values())
     min_degree = min(degrees.values())
 
     plt.figure(figsize=(8, 6))
     nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray')
-    plt.title("随机连通图")
+    plt.title("Random connected graph")
     plt.show()
 
-    #对随机生成的连通图上的每个点进行赋权
+    #Assign weights to each vertex in the randomly generated connected graph
     for node in G.nodes() :
         G.nodes[node]['weight'] = random.randint(1, 10000)
         #print(f"Node {node} weight: {G.nodes[node]['weight']}")
 
     rand_m = 3
-    #运行算法1，计算图G的连通控制集
+    
     CD_set = algorithm_1(G, rand_m)
     numbor_2 = potential_function(G, CD_set, rand_m)
     min_weight_CDS = sum(G.nodes[node]['weight'] for node in CD_set)
-    # 输出连通控制集
-    print("近似连通控制集:", CD_set, min_weight_CDS)     
-    print("函数值是否为1:", numbor_2) 
-     
-    #运行之前提出的算法4，计算图G的连通控制集
+ 
+    print("Approximate connected dominating set:", CD_set, min_weight_CDS)     
+    print("Is the function value equal to 1:", numbor_2) 
 
     DS_set_2 = algorithm_3(G, rand_m)
     CD_set_2 = algorithm_4(G, DS_set_2)
     numbor_2 = potential_function(G, CD_set_2, rand_m)
     min_weight_OPT = sum(G.nodes[node]['weight'] for node in CD_set_2)
-    # 输出算法4计算的连通控制集
-    print("之前提出的算法计算的连通控制集:", CD_set_2, min_weight_OPT)     
-    print("函数值是否为1:", numbor_2) 
+    print("The connected dominating set computed by the two-step algorithm:", CD_set_2, min_weight_OPT)     
+    print("Is the function value equal to 1:", numbor_2) 
 
-    # 输出最大最小度
-    print("最大度:", max_degree)
-    print("最小度:", min_degree)
-    # 计算并输出近似比
+    
+    print("Maximum degree:", max_degree)
+    print("Minimum degree:", min_degree)
+
     approximation_rate = min_weight_CDS/min_weight_OPT
-    print("近似算法近似比为:", approximation_rate)
+    print("The approximation ratio of the approximation algorithm:", approximation_rate)
 
