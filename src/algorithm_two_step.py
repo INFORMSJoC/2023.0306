@@ -55,7 +55,7 @@ def need_cover_all(G, vertices, rand_m):
                 total_need += cover_need
     return total_need
 
-#定义potential_function
+#potential_function
 def potential_function(G, vertices, rand_m):
     number_f = number_c1(G, vertices) + need_cover_all(G, vertices, rand_m)
     return number_f
